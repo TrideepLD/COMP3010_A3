@@ -1,6 +1,15 @@
 package assg3;
 
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Scanner;
+
 public class Solver {
+	
+	private static String PATH = "src/assg3/data/p1_1.in";
+	ArrayList<int[]> sortedArray = new ArrayList<int[]>();
 	
 	/**
 	 * You can use this to test your program without running the jUnit test,
@@ -11,9 +20,17 @@ public class Solver {
 		
 		Solver m = new Solver();
 		// put in the right path
-		int[] answer = m.solve_1("/codes/src/assg3/data/p1_1.in");
-		System.out.println(answer[0]);
-		System.out.println(answer[1]);
+//		int[] answer = m.solve_1("/codes/src/assg3/data/p1_1.in");
+//		System.out.println(answer[0]);
+//		System.out.println(answer[1]);
+		
+		try {
+			m.readData(PATH);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
@@ -98,6 +115,31 @@ public class Solver {
 	 * @throws Exception if file is not found or if there is an input reading error
 	 */
    	public void readData(String infile) throws Exception {
-
+   		
+   		Scanner in = new Scanner(new FileReader(infile));
+   		
+   		while (in.hasNext()) {
+   			int transitPoints;
+   	   		int numberOfConnections;
+   	   		transitPoints = in.nextInt();
+   	   		numberOfConnections = in.nextInt();
+   	   		System.out.println("Number of Transit Points: " + transitPoints + "\nNumber of Connections: " + numberOfConnections);
+   	   			
+   	   		for (int i = 0; i < numberOfConnections ; i++) {
+   	   	   		int start = in.nextInt();
+   				int end = in.nextInt();
+   				int capacity = in.nextInt();
+   				int cost = in.nextInt();
+   	   			
+   				int[] arr = {start, end, capacity, cost};
+   				sortedArray.add(arr);
+   			}
+   	   		// Using lambda function to sort arrayList
+   	   		// Sorts based on start bids.
+   	   		sortedArray.sort(Comparator.comparingInt(c -> c[0]));
+   	   		System.out.println(Arrays.deepToString(sortedArray.toArray()));
+   		}
+   		in.close();
+   		
 	}
 }
