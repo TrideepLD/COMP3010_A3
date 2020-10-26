@@ -6,6 +6,7 @@ import java.util.*;
 import java.lang.*; 
 import java.io.*; 
 
+@SuppressWarnings("unused")
 class ShortestPath { 
 	// A utility function to find the vertex with minimum distance value, 
 	// from the set of vertices not yet included in shortest path tree 
