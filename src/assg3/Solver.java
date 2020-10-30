@@ -22,17 +22,12 @@ public class Solver {
 		
 		Solver m = new Solver();
 		// put in the right path
-//		int[] answer = m.solve_1("/codes/src/assg3/data/p1_1.in");
+		int[] answer = m.solve_1("src/assg3/data/p1_1.in");
+		System.out.println(Arrays.toString(answer));
 //		System.out.println(answer[0]);
 //		System.out.println(answer[1]);
 		
-		try {
-			m.readData(PATH);
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		m.solve_1("/codes/src/assg3/data/p1_1.in");
 		
 	}
 	
@@ -49,78 +44,69 @@ public class Solver {
 	 *          a package from the source vertex to the destination vertex
 	 */
 	
-	int V, E;
+	// Simple bellman ford I copied of off gfg because i ceebs
 	
-	class Graph {
-		 Graph(int v, int e) 
-		 { 
-		     V = v; 
-		     E = e; 
-		     edge = new Edge[e]; 
-		     for (int i = 0; i < e; ++i) 
-		         edge[i] = new Edge(); 
-		 } 
-	}
-	
-	class Edge { 
-	     int src, dest, weight; 
-	     Edge() 
-	     { 
-	         src = dest = weight = 0; 
-	     } 
-	 }; 
-	 
-	 void BellmanFord(Graph graph, int src) 
-	 { 
-	     int V = graph.V, E = graph.E; 
-	     int dist[] = new int[V]; 
-
-	     // Step 1: Initialize distances from src to all other 
-	     // vertices as INFINITE 
-	     for (int i = 0; i < V; ++i) 
-	         dist[i] = Integer.MAX_VALUE; 
-	     dist[src] = 0; 
-
-	     // Step 2: Relax all edges |V| - 1 times. A simple 
-	     // shortest path from src to any other vertex can 
-	     // have at-most |V| - 1 edges 
-	     for (int i = 1; i < V; ++i) { 
-	         for (int j = 0; j < E; ++j) { 
-	             int u = graph.edge[j].src; 
-	             int v = graph.edge[j].dest; 
-	             int weight = graph.edge[j].weight; 
-	             if (dist[u] != Integer.MAX_VALUE && dist[u] + weight < dist[v]) 
-	                 dist[v] = dist[u] + weight; 
-	         } 
-	     } 
-
-	     // Step 3: check for negative-weight cycles. The above 
-	     // step guarantees shortest distances if graph doesn't 
-	     // contain negative weight cycle. If we get a shorter 
-	     // path, then there is a cycle. 
-	     for (int j = 0; j < E; ++j) { 
-	         int u = graph.edge[j].src; 
-	         int v = graph.edge[j].dest; 
-	         int weight = graph.edge[j].weight; 
-	         if (dist[u] != Integer.MAX_VALUE && dist[u] + weight < dist[v]) { 
-	             System.out.println("Graph contains negative weight cycle"); 
-	             return; 
-	         } 
-	     } 
-	 }
-	
-	public int[] solve_1(String infile) {
-		try {
-			readData(infile);
-		     int V = 5; // Number of vertices in graph 
-		     int E = 8; // Number of edges in graph 
-		     Graph graph = new Graph(V, E);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		int[] a = {1,4};
-		return a;
+	static int BellmanFord(int graph[][], int V, int E, int array[]) {
+		int dest = array[1];
+		// Initialize distance of all vertices as infinite. 
+		int []dis = new int[V]; 
+		for (int i = 0; i < V; i++) 
+		    dis[i] = Integer.MAX_VALUE; 
+		
+		// initialize distance of source as 0 
+		dis[0] = 0; 
+		
+		// Relax all edges |V| - 1 times. A simple 
+		// shortest path from src to any other 
+		// vertex can have at-most |V| - 1 edges 
+		for (int i = 0; i < V - 1; i++)  
+		{ 
+		
+		    for (int j = 0; j < E; j++)  
+		    { 
+		        if (dis[graph[j][0]] + graph[j][3] < 
+		                        dis[graph[j][1]]) 
+		            dis[graph[j][1]] =  
+		            dis[graph[j][0]] + graph[j][3]; 
+		    } 
+		} 
+		
+		// check for negative-weight cycles. 
+		// The above step guarantees shortest 
+		// distances if graph doesn't contain 
+		// negative weight cycle. If we get a 
+		// shorter path, then there is a cycle. 
+		for (int i = 0; i < E; i++)  
+		{ 
+		    int x = graph[i][0]; 
+		    int y = graph[i][1]; 
+		    int weight = graph[i][3]; 
+		    if (dis[x] != Integer.MAX_VALUE && 
+		            dis[x] + weight < dis[y]) 
+		        System.out.println("Graph contains negative"
+		                +" weight cycle"); 
+		} 
+		
+		System.out.println("Vertex Distance from Source"); 
+		for (int i = 0; i < V; i++) 
+		    System.out.println(i + "\t\t" + dis[i]); 
+		
+		return dis[dest];
+		
+		} 
+		
+		public int[] solve_1(String infile) {
+			try {
+				readData(infile);
+			    
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+			int[] a = {1,4};
+			a[1] = BellmanFord(someArray, transitPoints, numberOfConnections, a);
+			System.out.println(Arrays.toString(a));
+			return a;
 	}
 
 	/** The solve_2 method accepts a String containing the path to the
@@ -182,6 +168,7 @@ public class Solver {
 	
 	int transitPoints;
    	int numberOfConnections;
+   	int[][] someArray ;
    	public void readData(String infile) throws Exception {
    		
    		Scanner in = new Scanner(new FileReader(infile));
@@ -189,8 +176,9 @@ public class Solver {
    		while (in.hasNext()) {
    	   		transitPoints = in.nextInt();
    	   		numberOfConnections = in.nextInt();
+   	   		someArray = new int[numberOfConnections][4];
    	   		System.out.println("Number of Transit Points: " + transitPoints + "\nNumber of Connections: " + numberOfConnections);
-   	   			
+
    	   		for (int i = 0; i < numberOfConnections ; i++) {
    	   	   		int start = in.nextInt();
    				int end = in.nextInt();
@@ -198,12 +186,25 @@ public class Solver {
    				int cost = in.nextInt();
    	   			
    				int[] arr = {start, end, capacity, cost};
+   				for (int j = 0; j < 4; j++) {
+					if (j == 0) {
+						someArray[i][0] = start;
+					} else if (j==1) {
+						someArray[i][1] = end;
+					} else if (j==2) {
+						someArray[i][2] = capacity;
+					} else if (j==3) {
+						someArray[i][3] = cost;
+					}
+				}
    				sortedArray.add(arr);
+   				// For some reason I wanted 2 arrays, maybe I'll remember why if I put a comment here.
    			}
    	   		// Using lambda function to sort arrayList
    	   		// Sorts based on start bids.
    	   		sortedArray.sort(Comparator.comparingInt(c -> c[0]));
-   	   		System.out.println(Arrays.deepToString(sortedArray.toArray()));
+//   	   		System.out.println(Arrays.deepToString(sortedArray.toArray()));
+//   	   		System.out.println(Arrays.deepToString(someArray));
    		}
    		in.close();
    		
