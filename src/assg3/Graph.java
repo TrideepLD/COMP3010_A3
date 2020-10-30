@@ -7,6 +7,7 @@ import java.lang.*;
 import java.io.*; 
 
 //A class to represent a connected, directed and weighted graph 
+@SuppressWarnings("unused")
 class Graph { 
  // A class to represent a weighted edge in graph 
  class Edge { 

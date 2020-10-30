@@ -8,7 +8,7 @@ public class SolverTest {
 
 	private static Solver s = new Solver();
 	// change the path as necessary
-	private String PATH = "/codes/src/assg3/data/";
+	private String PATH = "src/assg3/data/";
 	
 	@Test (timeout=500)
 	public void test_p1_1() {
