@@ -10,7 +10,7 @@ import assg3.Graph.Edge;
 
 public class Solver {
 	
-	private static String PATH = "src/assg3/data/p1_1.in";
+	private static String PATH = "src/assg3/data/p1_02.in";
 	ArrayList<int[]> sortedArray = new ArrayList<int[]>();
 	
 	/**
@@ -22,7 +22,7 @@ public class Solver {
 		
 		Solver m = new Solver();
 		// put in the right path
-		int[] answer = m.solve_1("src/assg3/data/p1_1.in");
+		int[] answer = m.solve_1("src/assg3/data/p1_02.in");
 		System.out.println(Arrays.toString(answer));
 //		System.out.println(answer[0]);
 //		System.out.println(answer[1]);
@@ -62,7 +62,7 @@ public class Solver {
 		for (int i = 0; i < V - 1; i++)  
 		{ 
 		
-		    for (int j = 0; j < E; j++)  
+		    for (int j = 0; j < 4; j++)  
 		    { 
 		        if (dis[graph[j][0]] + graph[j][3] < 
 		                        dis[graph[j][1]]) 
