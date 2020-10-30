@@ -24,8 +24,6 @@ public class Solver {
 		// put in the right path
 		int[] answer = m.solve_1("src/assg3/data/p1_02.in");
 		System.out.println(Arrays.toString(answer));
-//		System.out.println(answer[0]);
-//		System.out.println(answer[1]);
 		
 //		m.solve_1("/codes/src/assg3/data/p1_1.in");
 		
@@ -46,8 +44,8 @@ public class Solver {
 	
 	// Simple bellman ford I copied of off gfg because i ceebs
 	
-	static int BellmanFord(int graph[][], int V, int E, int array[]) {
-		int dest = array[1];
+	static int BellmanFord(int graph[][], int V, int E) {
+		int dest = V-1;
 		// Initialize distance of all vertices as infinite. 
 		int []dis = new int[V]; 
 		for (int i = 0; i < V; i++) 
@@ -62,12 +60,13 @@ public class Solver {
 		for (int i = 0; i < V - 1; i++)  
 		{ 
 		
-		    for (int j = 0; j < 4; j++)  
+		    for (int j = 0; j < E; j++)  
 		    { 
-		        if (dis[graph[j][0]] + graph[j][3] < 
-		                        dis[graph[j][1]]) 
-		            dis[graph[j][1]] =  
-		            dis[graph[j][0]] + graph[j][3]; 
+		        if (dis[graph[j][0]] + graph[j][3] < dis[graph[j][1]]) {
+		        	if (dis[graph[j][0]] + graph[j][3] >= 0) {
+		        		dis[graph[j][1]] = dis[graph[j][0]] + graph[j][3]; 
+					}
+		        }	
 		    } 
 		} 
 		
@@ -83,8 +82,7 @@ public class Solver {
 		    int weight = graph[i][3]; 
 		    if (dis[x] != Integer.MAX_VALUE && 
 		            dis[x] + weight < dis[y]) 
-		        System.out.println("Graph contains negative"
-		                +" weight cycle"); 
+		        System.out.println("Graph contains negative" + " weight cycle"); 
 		} 
 		
 		System.out.println("Vertex Distance from Source"); 
@@ -104,10 +102,11 @@ public class Solver {
 				e.printStackTrace();
 			}
 			int[] a = {1,4};
-			a[1] = BellmanFord(someArray, transitPoints, numberOfConnections, a);
-			System.out.println(Arrays.toString(a));
+			a[1] = BellmanFord(someArray, transitPoints, numberOfConnections);
+//			System.out.println(Arrays.toString(a));
 			return a;
 	}
+
 
 	/** The solve_2 method accepts a String containing the path to the
 	 * input file containing the transportation network as described 
@@ -204,7 +203,7 @@ public class Solver {
    	   		// Sorts based on start bids.
    	   		sortedArray.sort(Comparator.comparingInt(c -> c[0]));
 //   	   		System.out.println(Arrays.deepToString(sortedArray.toArray()));
-//   	   		System.out.println(Arrays.deepToString(someArray));
+   	   		System.out.println(Arrays.deepToString(someArray));
    		}
    		in.close();
    		
