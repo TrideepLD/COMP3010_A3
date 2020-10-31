@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 import assg3.Graph.Edge;
@@ -12,6 +13,13 @@ public class Solver {
 	
 	private static String PATH = "src/assg3/data/p1_02.in";
 	ArrayList<int[]> sortedArray = new ArrayList<int[]>();
+	// residual graph
+	// Stores the capacity of each edge 
+	int capacityArray[][]; 
+
+	// residual graph
+	// Stores the cost per flow of each edge 
+	int costArray[][]; 
 	
 	/**
 	 * You can use this to test your program without running the jUnit test,
@@ -22,7 +30,7 @@ public class Solver {
 		
 		Solver m = new Solver();
 		// put in the right path
-		int[] answer = m.solve_1("src/assg3/data/p1_02.in");
+		int[] answer = m.solve_2("src/assg3/data/p2_02.in");
 		System.out.println(Arrays.toString(answer));
 		
 //		m.solve_1("/codes/src/assg3/data/p1_1.in");
@@ -121,6 +129,98 @@ public class Solver {
 	 * @param 	infile the file containing the input
 	 * @return	an array [x,0] where x is the maximum flow in the network
 	 */
+		
+		boolean bfs(int rGraph[][], int s, int t, int parent[]) 
+	    { 
+	        // Create a visited array and mark all vertices as not 
+	        // visited 
+	        boolean visited[] = new boolean[transitPoints]; 
+	        for(int i=0; i<transitPoints; ++i) 
+	            visited[i]=false; 
+	  
+	        // Create a queue, enqueue source vertex and mark 
+	        // source vertex as visited 
+	        LinkedList<Integer> queue = new LinkedList<Integer>(); 
+	        queue.add(s); 
+	        visited[s] = true; 
+	        parent[s]=-1; 
+	  
+	        // Standard BFS Loop 
+	        while (queue.size()!=0) 
+	        { 
+	            int u = queue.poll(); 
+	  
+	            for (int v=0; v<transitPoints; v++) 
+	            { 
+	                if (visited[v]==false && rGraph[u][v] > 0) 
+	                { 
+	                    queue.add(v); 
+	                    parent[v] = u; 
+	                    visited[v] = true; 
+	                } 
+	            } 
+	        } 
+	  
+	        // If we reached sink in BFS starting from source, then 
+	        // return true, else false 
+	        return (visited[t] == true); 
+	    } 
+	  
+	    // Returns tne maximum flow from s to t in the given graph 
+	    int fordFulkerson(int graph[][], int s, int t) 
+	    { 
+	        int u, v; 
+	  
+	        // Create a residual graph and fill the residual graph 
+	        // with given capacities in the original graph as 
+	        // residual capacities in residual graph 
+	  
+	        // Residual graph where rGraph[i][j] indicates 
+	        // residual capacity of edge from i to j (if there 
+	        // is an edge. If rGraph[i][j] is 0, then there is 
+	        // not) 
+	        int rGraph[][] = new int[transitPoints][transitPoints]; 
+	  
+	        for (u = 0; u < transitPoints; u++) 
+	            for (v = 0; v < transitPoints; v++) 
+	                rGraph[u][v] = graph[u][v]; 
+	  
+	        // This array is filled by BFS and to store path 
+	        int parent[] = new int[transitPoints]; 
+	  
+	        int max_flow = 0;  // There is no flow initially 
+	        System.out.println(transitPoints);
+	        // Augment the flow while tere is path from source 
+	        // to sink 
+	        while (bfs(rGraph, s, t, parent)) 
+	        { 
+	            // Find minimum residual capacity of the edhes 
+	            // along the path filled by BFS. Or we can say 
+	            // find the maximum flow through the path found. 
+	            int path_flow = Integer.MAX_VALUE; 
+	            for (v=t; v!=s; v=parent[v]) 
+	            { 
+	                u = parent[v]; 
+	                path_flow = Math.min(path_flow, rGraph[u][v]); 
+	            } 
+	  
+	            // update residual capacities of the edges and 
+	            // reverse edges along the path 
+	            for (v=t; v != s; v=parent[v]) 
+	            { 
+	                u = parent[v]; 
+	                rGraph[u][v] -= path_flow; 
+	                rGraph[v][u] += path_flow; 
+	            } 
+	  
+	            // Add path flow to overall flow 
+	            max_flow += path_flow; 
+	        } 
+	  
+	        // Return the overall flow 
+	        System.out.println(max_flow);
+	        return max_flow; 
+	    } 
 	
 	public int[] solve_2(String infile) {
 		try {
@@ -129,7 +229,10 @@ public class Solver {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		int[] a = {20,0};
+		int[] a = {10,0};
+		int sink = transitPoints - 1;
+		a[0] = fordFulkerson(capacityArray, 0, sink);
+		System.out.println(Arrays.toString(a));
 		return a;
 	}
 
@@ -142,6 +245,11 @@ public class Solver {
 	 * @return	an array [x,y] where x is the maximum flow in the network
 	 *          and y is the cost of flow
 	 */
+	
+	
+	
+	
+	
 	public int[] solve_3(String infile) {
 		try {
 			readData(infile);
@@ -150,6 +258,7 @@ public class Solver {
 			e.printStackTrace();
 		}
 		int[] a = {20,105};
+		
 		return a;
 	}
 
@@ -177,12 +286,18 @@ public class Solver {
    	   		numberOfConnections = in.nextInt();
    	   		someArray = new int[numberOfConnections][4];
    	   		System.out.println("Number of Transit Points: " + transitPoints + "\nNumber of Connections: " + numberOfConnections);
+   	   		capacityArray = new int[transitPoints][numberOfConnections];
+	   	    costArray = new int[transitPoints][numberOfConnections];
 
    	   		for (int i = 0; i < numberOfConnections ; i++) {
    	   	   		int start = in.nextInt();
    				int end = in.nextInt();
    				int capacity = in.nextInt();
    				int cost = in.nextInt();
+   				
+   				capacityArray[start][end] = capacity;
+   	   	   	    costArray[start][end] = cost;
+   				
    	   			
    				int[] arr = {start, end, capacity, cost};
    				for (int j = 0; j < 4; j++) {
