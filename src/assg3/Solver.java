@@ -11,22 +11,30 @@ import assg3.Graph.Edge;
 
 public class Solver {
 	
-	private static String PATH = "src/assg3/data/p1_02.in";
-	ArrayList<int[]> sortedArray = new ArrayList<int[]>();
-	// residual graph
-	// Stores the capacity of each edge 
-	int capacityArray[][]; 
-
-	// residual graph
-	// Stores the cost per flow of each edge 
-	int costArray[][]; 
+//	private static String PATH = "src/assg3/data/p1_02.in";
+	
+	int transitPoints; // vertex
+   	int numberOfConnections; // edge
+	
+	// Initialize much needed arrays
+	
+   	int[][] problem_1_Array; // 2D array with {startNode, endNode, capacity, cost}
+	int capacityArray[][];  // 2D array that goes [v][e]
+	int costArray[][];  // 2D array that goes [v][e]
+	
+	
+	int[][] flow; 
+	int[] distance; 
+	int[] srcVal; 
+	boolean[] marked; 
+	int[] nodeEdge; 
 	
 	/**
 	 * You can use this to test your program without running the jUnit test,
 	 * and you can use your own input file. You can of course also make your
 	 * own tests and add it to the jUnit tests.
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) {	
 		
 		Solver m = new Solver();
 		// put in the right path
@@ -49,8 +57,6 @@ public class Solver {
 	 * @return	an array [1,x] where x is the cheapest cost of sending
 	 *          a package from the source vertex to the destination vertex
 	 */
-	
-	// Simple bellman ford I copied of off gfg because i ceebs
 	
 	static int BellmanFord(int graph[][], int V, int E) {
 		int dest = V-1;
@@ -92,10 +98,10 @@ public class Solver {
 		            dis[x] + weight < dis[y]) 
 		        System.out.println("Graph contains negative" + " weight cycle"); 
 		} 
-		
-		System.out.println("Vertex Distance from Source"); 
-		for (int i = 0; i < V; i++) 
-		    System.out.println(i + "\t\t" + dis[i]); 
+//		
+//		System.out.println("Vertex Distance from Source"); 
+//		for (int i = 0; i < V; i++) 
+//		    System.out.println(i + "\t\t" + dis[i]); 
 		
 		return dis[dest];
 		
@@ -110,7 +116,7 @@ public class Solver {
 				e.printStackTrace();
 			}
 			int[] a = {1,4};
-			a[1] = BellmanFord(someArray, transitPoints, numberOfConnections);
+			a[1] = BellmanFord(problem_1_Array, transitPoints, numberOfConnections);
 //			System.out.println(Arrays.toString(a));
 			return a;
 	}
@@ -190,11 +196,11 @@ public class Solver {
 	  
 	        int max_flow = 0;  // There is no flow initially 
 	        System.out.println(transitPoints);
-	        // Augment the flow while tere is path from source 
+	        // Augment the flow while there is path from source 
 	        // to sink 
 	        while (bfs(rGraph, s, t, parent)) 
 	        { 
-	            // Find minimum residual capacity of the edhes 
+	            // Find minimum residual capacity of the edges 
 	            // along the path filled by BFS. Or we can say 
 	            // find the maximum flow through the path found. 
 	            int path_flow = Integer.MAX_VALUE; 
@@ -230,8 +236,7 @@ public class Solver {
 			e.printStackTrace();
 		}
 		int[] a = {10,0};
-		int sink = transitPoints - 1;
-		a[0] = fordFulkerson(capacityArray, 0, sink);
+		a[0] = fordFulkerson(capacityArray, 0, transitPoints-1);
 		System.out.println(Arrays.toString(a));
 		return a;
 	}
@@ -246,10 +251,130 @@ public class Solver {
 	 *          and y is the cost of flow
 	 */
 	
+	int[] getMinCostMaxFlow(int src, int dest) 
+	{ 
+		int max_flow = 0;
+		int min_cost = 0; 
+		
+		marked = new boolean[transitPoints]; 
+		flow = new int[transitPoints][transitPoints]; 
+		distance = new int[transitPoints + 1]; 
+		srcVal = new int[transitPoints]; 
+		nodeEdge = new int[transitPoints]; 
+
+		// If a path exist from src to sink 
+		while (search(src, dest)) { 
+        	//when we get here it means path still exists from source to destination
+			
+			// Set the default max path flow
+			int path_flow = Integer.MAX_VALUE; 
+			// find maximum flow of path filled by current bfs
+			for (int i = dest; i != src; i = srcVal[i]) {
+				
+				int someValue = 0;
+				
+				if (flow[i][srcVal[i]] != 0) {
+					someValue = flow[i][srcVal[i]];
+				} 
+				else {
+					someValue = capacityArray[srcVal[i]][i] - flow[srcVal[i]][i];
+				}
+				
+				path_flow = Math.min(path_flow, someValue); 
+			}
+			for (int i = dest; i != src; i = srcVal[i]) { 
+
+				if (flow[i][srcVal[i]] != 0) { 
+					flow[i][srcVal[i]] -= path_flow; 
+					min_cost -= path_flow * costArray[i][srcVal[i]]; 
+				} 
+				else { 
+					flow[srcVal[i]][i] += path_flow; 
+					min_cost += path_flow * costArray[srcVal[i]][i]; 
+				} 
+			} 
+			// add the flow of current path to maximum flow
+			max_flow += path_flow; 
+		} 
+		
+		int[] result = { max_flow, min_cost };
+
+		// Return pair total cost and sink 
+		return result; 
+	} 
 	
-	
-	
-	
+	boolean search(int src, int dest) 
+	{ 
+		// Unmark all
+		Arrays.fill(marked, false); 
+		
+		// Make distance = inf
+		Arrays.fill(distance, Integer.MAX_VALUE); 
+
+		// Dist from src
+		distance[src] = 0; 
+
+		// Iterate until src reaches transit points
+		while (src != transitPoints) { 
+
+			int best = transitPoints; 
+			marked[src] = true; 
+
+			for (int i = 0; i < transitPoints; i++) { 
+
+				// If already found 
+				if (marked[i]) {
+					continue;  // go to next iteration
+				}
+
+				// Evaluate while flow 
+				// is still in supply 
+				if (flow[i][src] != 0) { 
+
+					// Obtain the total value 
+					int val = distance[src] + nodeEdge[src] - nodeEdge[i] - costArray[i][src]; 
+
+					// If distance[i] is > minimum value 
+					if (distance[i] > val) { 
+
+						// Update the new distance values
+						distance[i] = val; 
+						srcVal[i] = src; 
+					} 
+				} 
+
+				if (flow[src][i] < capacityArray[src][i]) { 
+
+					int val = distance[src] + nodeEdge[src] 
+							- nodeEdge[i] + costArray[src][i]; 
+
+					// If distance[i] is > minimum value 
+					if (distance[i] > val) { 
+
+						// Update new distance values
+						distance[i] = val; 
+						srcVal[i] = src; 
+					} 
+				} 
+
+				if (distance[i] < distance[best]) {
+					best = i; 
+				}
+			} 
+
+			// Update src to best for 
+			// next iteration 
+			src = best; 
+		} 
+
+		for (int i = 0; i < transitPoints; i++)  {
+			nodeEdge[i] = Math.min(nodeEdge[i] + distance[i], Integer.MAX_VALUE); 
+		}
+
+		// Return the value obtained at sink 
+		return marked[dest]; 
+	} 
+
 	public int[] solve_3(String infile) {
 		try {
 			readData(infile);
@@ -258,7 +383,7 @@ public class Solver {
 			e.printStackTrace();
 		}
 		int[] a = {20,105};
-		
+		a = getMinCostMaxFlow(0, transitPoints-1); 
 		return a;
 	}
 
@@ -273,10 +398,7 @@ public class Solver {
 	 * @param infile the input file containing the problem
 	 * @throws Exception if file is not found or if there is an input reading error
 	 */
-	
-	int transitPoints;
-   	int numberOfConnections;
-   	int[][] someArray ;
+
    	public void readData(String infile) throws Exception {
    		
    		Scanner in = new Scanner(new FileReader(infile));
@@ -284,8 +406,8 @@ public class Solver {
    		while (in.hasNext()) {
    	   		transitPoints = in.nextInt();
    	   		numberOfConnections = in.nextInt();
-   	   		someArray = new int[numberOfConnections][4];
-   	   		System.out.println("Number of Transit Points: " + transitPoints + "\nNumber of Connections: " + numberOfConnections);
+   	   		problem_1_Array = new int[numberOfConnections][transitPoints];
+//   	   		System.out.println("Number of Transit Points: " + transitPoints + "\nNumber of Connections: " + numberOfConnections);
    	   		capacityArray = new int[transitPoints][numberOfConnections];
 	   	    costArray = new int[transitPoints][numberOfConnections];
 
@@ -298,27 +420,20 @@ public class Solver {
    				capacityArray[start][end] = capacity;
    	   	   	    costArray[start][end] = cost;
    				
-   	   			
-   				int[] arr = {start, end, capacity, cost};
    				for (int j = 0; j < 4; j++) {
 					if (j == 0) {
-						someArray[i][0] = start;
+						problem_1_Array[i][0] = start;
 					} else if (j==1) {
-						someArray[i][1] = end;
+						problem_1_Array[i][1] = end;
 					} else if (j==2) {
-						someArray[i][2] = capacity;
+						problem_1_Array[i][2] = capacity;
 					} else if (j==3) {
-						someArray[i][3] = cost;
+						problem_1_Array[i][3] = cost;
 					}
 				}
-   				sortedArray.add(arr);
-   				// For some reason I wanted 2 arrays, maybe I'll remember why if I put a comment here.
+   				
    			}
-   	   		// Using lambda function to sort arrayList
-   	   		// Sorts based on start bids.
-   	   		sortedArray.sort(Comparator.comparingInt(c -> c[0]));
-//   	   		System.out.println(Arrays.deepToString(sortedArray.toArray()));
-   	   		System.out.println(Arrays.deepToString(someArray));
+//   	   		System.out.println(Arrays.deepToString(problem_1_Array));
    		}
    		in.close();
    		

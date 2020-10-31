@@ -10,59 +10,59 @@ public class SolverTest {
 	// change the path as necessary
 	private String PATH = "src/assg3/data/";
 	
-//	@Test (timeout=500)
-//	public void test_p1_1() {
-//		s = new Solver();
-//		int[] expected = {1,4};
-//		int[] actual = s.solve_1(PATH + "p1_01.in");
-//		assertEquals(expected[0],actual[0]);
-//		assertEquals(expected[1],actual[1]);
-//	}
-//	
-//	@Test (timeout=500)
-//	public void test_p1_2() {
-//		s = new Solver();
-//		int[] expected = {1,22};
-//		int[] actual = s.solve_1(PATH + "p1_02.in");
-//		assertEquals(expected[0],actual[0]);
-//		assertEquals(expected[1],actual[1]);
-//	}
-//	
-//	@Test (timeout=500)
-//	public void test_p1_3() {
-//		s = new Solver();
-//		int[] expected = {1,27};
-//		int[] actual = s.solve_1(PATH + "p1_03.in");
-//		assertEquals(expected[0],actual[0]);
-//		assertEquals(expected[1],actual[1]);
-//	}
+	@Test (timeout=500)
+	public void test_p1_1() {
+		s = new Solver();
+		int[] expected = {1,4};
+		int[] actual = s.solve_1(PATH + "p1_01.in");
+		assertEquals(expected[0],actual[0]);
+		assertEquals(expected[1],actual[1]);
+	}
 	
-//	@Test (timeout=500)
-//	public void test_p2_1() {
-//		s = new Solver();
-//		int[] expected = {20,0};
-//		int[] actual = s.solve_2(PATH + "p2_01.in");
-//		assertEquals(expected[0],actual[0]);
-//		assertEquals(expected[1],actual[1]);
-//	}
-//	
-//	@Test (timeout=500)
-//	public void test_p2_2() {
-//		s = new Solver();
-//		int[] expected = {30,0};
-//		int[] actual = s.solve_2(PATH + "p2_02.in");
-//		assertEquals(expected[0],actual[0]);
-//		assertEquals(expected[1],actual[1]);
-//	}
-//	
-//	@Test (timeout=500)
-//	public void test_p2_3() {
-//		s = new Solver();
-//		int[] expected = {80,0};
-//		int[] actual = s.solve_2(PATH + "p2_03.in");
-//		assertEquals(expected[0],actual[0]);
-//		assertEquals(expected[1],actual[1]);
-//	}
+	@Test (timeout=500)
+	public void test_p1_2() {
+		s = new Solver();
+		int[] expected = {1,22};
+		int[] actual = s.solve_1(PATH + "p1_02.in");
+		assertEquals(expected[0],actual[0]);
+		assertEquals(expected[1],actual[1]);
+	}
+	
+	@Test (timeout=500)
+	public void test_p1_3() {
+		s = new Solver();
+		int[] expected = {1,27};
+		int[] actual = s.solve_1(PATH + "p1_03.in");
+		assertEquals(expected[0],actual[0]);
+		assertEquals(expected[1],actual[1]);
+	}
+	
+	@Test (timeout=500)
+	public void test_p2_1() {
+		s = new Solver();
+		int[] expected = {20,0};
+		int[] actual = s.solve_2(PATH + "p2_01.in");
+		assertEquals(expected[0],actual[0]);
+		assertEquals(expected[1],actual[1]);
+	}
+	
+	@Test (timeout=500)
+	public void test_p2_2() {
+		s = new Solver();
+		int[] expected = {30,0};
+		int[] actual = s.solve_2(PATH + "p2_02.in");
+		assertEquals(expected[0],actual[0]);
+		assertEquals(expected[1],actual[1]);
+	}
+	
+	@Test (timeout=500)
+	public void test_p2_3() {
+		s = new Solver();
+		int[] expected = {80,0};
+		int[] actual = s.solve_2(PATH + "p2_03.in");
+		assertEquals(expected[0],actual[0]);
+		assertEquals(expected[1],actual[1]);
+	}
 	
 	@Test (timeout=500)
 	public void test_p3_1() {
